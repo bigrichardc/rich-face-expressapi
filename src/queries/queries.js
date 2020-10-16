@@ -6,6 +6,15 @@ const pool = new Pool({
   },
 });
 
+/*const pool = new Pool({
+  user: 'richard',
+  host: 'localhost',
+  database: 'rich_face_api',
+  password: 'password',
+  port: 5432,
+});
+*/
+
 module.exports = {
   getPosts: function (req, res) {
     console.log('Getting...');
@@ -18,8 +27,24 @@ module.exports = {
   },
   getPostById: function (req, res) {
     const id = parseInt(req.params.id);
-
     pool.query('SELECT * FROM posts WHERE postId = $1', [id], (err, results) => {
+      if (err) {
+        throw err;
+      }
+      res.status(200).json(results.rows);
+    });
+  },
+  getCommentsByPostId: function (req, res) {
+    const id = parseInt(req.params.id);
+    pool.query('SELECT * FROM comments WHERE postId = $1', [id], (err, results) => {
+      if (err) {
+        throw err;
+      }
+      res.status(200).json(results.rows);
+    });
+  },
+  getComments: function (req, res) {
+    pool.query('SELECT * FROM comments', (err, results) => {
       if (err) {
         throw err;
       }
