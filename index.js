@@ -9,6 +9,7 @@ import {
   deletePost,
   getComments,
   getCommentsByPostId,
+  insertComment,
 } from './src/queries/queries';
 
 const app = express();
@@ -34,5 +35,6 @@ app.route('/comments').get(getComments);
 app.route('/posts').post(insertPost);
 app.route('/posts/:id').put(updatePost);
 app.route('/posts/:id').delete(deletePost);
+app.route('/comments').post(insertComment);
 
 app.listen(PORT, () => console.log('Server running on ' + PORT));

@@ -1,23 +1,23 @@
 const { Pool } = require('pg');
-const pool = new Pool({
+/*const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
 });
+*/
 
-/*const pool = new Pool({
+const pool = new Pool({
   user: 'richard',
   host: 'localhost',
   database: 'rich_face_api',
   password: 'password',
   port: 5432,
 });
-*/
 
 module.exports = {
   getPosts: function (req, res) {
-    console.log('Getting...');
+    console.log('Getting posts...');
     pool.query('SELECT * FROM posts ORDER BY postId ASC', (err, results) => {
       if (err) {
         throw err;
@@ -44,6 +44,7 @@ module.exports = {
     });
   },
   getComments: function (req, res) {
+    console.log('Getting comments....');
     pool.query('SELECT * FROM comments', (err, results) => {
       if (err) {
         throw err;
@@ -92,5 +93,22 @@ module.exports = {
       }
       res.status(200).send(`Post ${id} deleted`);
     });
+  },
+  insertComment: function (req, res) {
+    console.log('Inserting...');
+    console.log(req.body);
+    const { postid, commentauthor, commenttext, commentdate } = req.body.comment;
+
+    pool.query(
+      'INSERT INTO comments (postid, commentauthor, commenttext, commentdate) VALUES ($1, $2, $3, $4)',
+      [postid, commentauthor, commenttext, commentdate],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        res.status(201).send(`Comment for ${postid} added b ${commentauthor}`);
+        console.log(`Comment for ${postid} added b ${commentauthor}`);
+      }
+    );
   },
 };
