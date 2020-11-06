@@ -53,17 +53,18 @@ module.exports = {
     });
   },
   insertPost: function (req, res) {
-    console.log('Inserting...');
-    const { postTitle, username, postText, postImage } = req.body;
+    console.log('Inserting blogpost...');
+    console.log(req.body);
+    const { posttitle, username, posttext, postimage } = req.body.blogpost;
 
     pool.query(
       'INSERT INTO posts (postTitle, username, postText, postImage) VALUES ($1, $2, $3, $4)',
-      [postTitle, username, postText, postImage],
+      [posttitle, username, posttext, postimage],
       (err, results) => {
         if (err) {
           throw err;
         }
-        res.status(201).send(`Post ${postTitle} added`);
+        res.status(201).send(`Post ${posttitle} added`);
       }
     );
   },
@@ -89,9 +90,15 @@ module.exports = {
 
     pool.query('DELETE FROM posts WHERE postId = $1', [id], (err, results) => {
       if (err) {
-        throw errl;
+        throw err;
       }
-      res.status(200).send(`Post ${id} deleted`);
+      pool.query('DELETE FROM comments WHERE postId = $1', [id], (err, results) => {
+        console.log('got here');
+        if (err) {
+          throw err;
+        }
+        res.status(200).send(`Post ${id} deleted`);
+      });
     });
   },
   insertComment: function (req, res) {
