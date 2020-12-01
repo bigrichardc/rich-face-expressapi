@@ -1,12 +1,12 @@
 const { Pool } = require('pg');
-/*const pool = new Pool({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
 });
 
-*/
+/*
 const pool = new Pool({
   user: 'richard',
   host: 'localhost',
@@ -14,6 +14,7 @@ const pool = new Pool({
   password: 'password',
   port: 5432,
 });
+*/
 
 module.exports = {
   getPosts: function (req, res) {
