@@ -1,12 +1,12 @@
 const { Pool } = require('pg');
-const pool = new Pool({
+/*const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
 });
 
-/*
+*/
 const pool = new Pool({
   user: 'richard',
   host: 'localhost',
@@ -14,7 +14,6 @@ const pool = new Pool({
   password: 'password',
   port: 5432,
 });
-*/
 
 module.exports = {
   getPosts: function (req, res) {
@@ -59,13 +58,17 @@ module.exports = {
     const { posttitle, username, posttext, postimage } = req.body.blogpost;
 
     pool.query(
-      'INSERT INTO posts (postTitle, username, postText, postImage) VALUES ($1, $2, $3, $4)',
+      'INSERT INTO posts (postTitle, username, postText, postImage, postdate) VALUES ($1, $2, $3, $4, current_date) returning postid',
       [posttitle, username, posttext, postimage],
       (err, results) => {
+        const post_id = results.rows[0].postid;
         if (err) {
           throw err;
         }
-        res.status(201).send(`Post ${posttitle} added`);
+        res.status(201).json({
+          postid: post_id,
+        });
+        //res.status(201).send(`Post ${posttitle} added`);
       }
     );
   },
@@ -88,7 +91,7 @@ module.exports = {
   deletePost: function (req, res) {
     const id = parseInt(req.params.id);
     console.log('Deleting...');
-
+    console.log(`DELETE FROM posts WHERE postId = ${id}`);
     pool.query('DELETE FROM posts WHERE postId = $1', [id], (err, results) => {
       if (err) {
         throw err;
