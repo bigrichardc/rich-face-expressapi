@@ -74,18 +74,24 @@ module.exports = {
     );
   },
   updatePost: function (req, res) {
+    console.log('update post called...');
     const id = parseInt(req.params.id);
-    console.log('Updating...');
+    console.log('Updating...' + id);
+    console.log(req.body.blogpost);
 
-    const { postTitle, username, postText, postImage } = req.body;
+    const { postid, posttitle, posttext, postimage } = req.body.blogpost;
+    console.log(posttext);
+
     pool.query(
-      'UPDATE posts SET postTitle = $1, username = $2, postText = $3, postImage = $4 WHERE postId = $5',
-      [postTitle, username, postText, postImage, id],
+      'UPDATE posts SET postTitle = $1, postText = $2, postImage = $3 WHERE postId = $4',
+      [posttitle, posttext, postimage, id],
       (err, results) => {
         if (err) {
           throw err;
         }
-        res.status(200).send(`Post ${postTitle} modified `);
+        res.status(200).json({
+          postid: id,
+        });
       }
     );
   },
